@@ -12,15 +12,23 @@ export default function ProductDetails() {
     const {id} = useParams<{id: string}>();
     const {basket, status} = useAppSelector(state => state.basket);
     const dispatch = useAppDispatch();
-    const product = useAppSelector(state => productSelectors.selectById(state, id));
+    const product = useAppSelector(state => {
+        if (typeof id === 'string') {
+            return productSelectors.selectById(state, parseInt(id));
+        }
+        // Handle the case where id is not a number
+        return null; // Or any other appropriate handling
+    });
     const {status: productStatus} = useAppSelector(state => state.catalog)
     const [amount, setAmount] = useState(0);
     const item = basket?.items.find(i => i.productId === product?.id);
 
 
     useEffect(() => {
+        if (typeof id === 'string') {
             if (item) setAmount(item.amount);
             if (!product) dispatch(fetchProductAsync(parseInt(id)))
+        }
     }, [id, item, product, dispatch])
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
