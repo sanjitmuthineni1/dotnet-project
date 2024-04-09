@@ -1,10 +1,31 @@
 using API.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Data
 {
     public static class DbInitializer
     {
-        public static void Initialize(StoreContext context) {
+        public static async Task Initialize(StoreContext context, UserManager<User> userManager) {
+
+            if(!userManager.Users.Any()) {
+                
+                var user = new User {
+                    UserName = "bob",
+                    Email = "bob@test.com"
+                };
+
+                await userManager.CreateAsync(user, "Pa$$w0rd");
+                await userManager.AddToRoleAsync(user, "Member");
+
+                var admin = new User {
+                    UserName = "admin",
+                    Email = "admin@test.com"
+                };
+
+                await userManager.CreateAsync(admin, "Pa$$w0rd");
+                await userManager.AddToRolesAsync(admin, new[] {"Member", "Admin"});
+
+            }
 
             if (context.Products.Any()) return;
 
@@ -158,7 +179,7 @@ namespace API.Data
                     Description =
                         "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
                     Price = 200,
-                    ImageUrl = "https://cdn11.bigcommerce.com/s-hgw48x3/images/stencil/1280x1280/products/2285/21904/Odyssey-Tri-Hot-5K-Double-Wide-CH-Back__63618.1666979867.jpg?c=2",
+                    ImageUrl = "https://www.golfavenue.com/media/catalog/product/t/r/tri-hot-5k-triple-wide-44166-1-13486_1.jpg",
                     Brand = "Callaway",
                     Type = "Putter",
                     AmountInStock = 100

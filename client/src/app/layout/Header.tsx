@@ -2,6 +2,7 @@ import { AppBar, Typography, Toolbar, Switch, List, ListItem, IconButton, Badge,
 import { Link, NavLink } from "react-router-dom";
 import { ShoppingCart } from "@mui/icons-material";
 import { useAppSelector } from "../store/configureStore";
+import SignedInMenu from "./SignedInMenu";
 
 
 
@@ -34,6 +35,7 @@ interface Props {
     handleThemeChange: () => void;
 }
 export default function Header({darkMode, handleThemeChange}: Props) {
+    const {user} = useAppSelector(state => state.account);
     const {basket} = useAppSelector(state => state.basket);
     const itemCount = basket?.items.reduce((sum, item) => sum + item.amount, 0)
 
@@ -72,7 +74,10 @@ export default function Header({darkMode, handleThemeChange}: Props) {
                                 <ShoppingCart />
                             </Badge>
                     </IconButton>
-                    <List sx={{display: 'flex'}}>
+                    {user ? (
+                        <SignedInMenu />
+                    ) : (
+                        <List sx={{display: 'flex'}}>
                         {rightLink.map(({title, path}) => (
                             <ListItem
                                 component={NavLink}
@@ -84,6 +89,7 @@ export default function Header({darkMode, handleThemeChange}: Props) {
                             </ListItem>
                         ))}
                     </List>
+                    )}
                 </Box>
             </Toolbar>
         </AppBar>
